@@ -1,0 +1,25 @@
+services:
+  app:		#el nombre de la imagen seria la carpeta del archivo y este valor
+    build: .		#construye la imagen del backend usando tu Dockerfile en todo-backend.
+    container_name: todo-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      REDIS_URL: "redis://redis:6379"
+    depends_on:
+      redis:
+        condition: service_healthy
+    # opcional: reiniciar si se cae
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: todo-redis
+    # no se expone puerto al host; basta con la red interna
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped

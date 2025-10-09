@@ -1,0 +1,25 @@
+# Ignorar dependencias locales (se instalan dentro del contenedor)
+node_modules
+
+# Archivos temporales o de logs
+npm-debug.log
+yarn-error.log
+*.log
+
+# Archivos de control
+.DS_Store
+.git
+.gitignore
+.dockerignore
+
+# Archivos de entorno sensibles
+.env
+.env.local
+
+# Archivos de configuración del host
+Dockerfile
+docker-compose.yml
+
+# Archivos del editor o sistema
+.vscode
+.idea

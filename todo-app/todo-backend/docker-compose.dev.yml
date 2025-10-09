@@ -1,0 +1,16 @@
+services:
+  mongo:		#el nombre de la imagen seria la carpeta del archivo y este valor
+    image: mongo:7
+    container_name: todo-dev-mongo
+    ports:
+      - 3456:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: the_database
+    volumes:
+      - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  #lo monta read-only (opcional, pero buena práctica). sirve para creacion de instrucciones y usuarios
+      - mongo_data:/data/db #Esto creará un directorio llamado mongo_data en el sistema de archivos local y lo asignará al contenedor como /data/db (Esto significa que los datos en /data/db se almacenan fuera del contenedor, ¡pero el contenedor aún puede acceder a ellos!)
+
+volumes:
+  mongo_data:
