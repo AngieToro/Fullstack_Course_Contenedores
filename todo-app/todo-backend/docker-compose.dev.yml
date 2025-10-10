@@ -11,6 +11,18 @@ services:
     volumes:
       - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  #lo monta read-only (opcional, pero buena práctica). sirve para creacion de instrucciones y usuarios
       - mongo_data:/data/db #Esto creará un directorio llamado mongo_data en el sistema de archivos local y lo asignará al contenedor como /data/db (Esto significa que los datos en /data/db se almacenan fuera del contenedor, ¡pero el contenedor aún puede acceder a ellos!)
-
+  redis:
+    image: redis:7
+    container_name: todo-dev-redis
+    ports: 
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    command: ['redis-server', '--appendonly', 'yes'] # Overwrite the CMD
+    volumes: # Declare the volume
+      - ./redis_data:/data
 volumes:
   mongo_data:

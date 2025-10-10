@@ -32,8 +32,12 @@ Pasos creaciones manuales
 	docker run -d --name todo-redis --network todo-net redis:7
 
 5- Ejecutar el backend con redis-> se crea una imagen y un contenedor
-	docker run --rm --name todo-backend \ --network todo-net \ -p 3000:3000 \ -e PORT=3000 \
-  	-e REDIS_URL=redis://todo-redis:6379 \ todo-backend
+	docker run --rm --name todo-backend \
+	  --network todo-net \
+	  -p 3000:3000 \
+	  -e PORT=3000 \
+	  -e REDIS_URL=redis://todo-redis:6379 \
+	  todo-backend
 
 6- Abrir http://localhost:3000 (el contador es 1, refrescar varias veces y validar que se actualice)
 
@@ -58,10 +62,16 @@ Pasos creaciones usando Docker compose (plantillas)
 3- Crear el archivo docker-compose.yml (en todo-backend/)
 
 4- Construir la imagen
-	docker compose up —build
+	docker compose -f docker-compose.dev.yml up -d (-d si ya se tiene, si es la primera vez no debe de ir)
 
-5- Con mongodb (en todo-backend/)
-	Como se activo la autenticación en Mongo con user root/example (del archivo yml), la URL debe incluir usuario/clave y authSource=admin (porque el usuario root vive en admin).
+5- Ejecutar los servidores de bases de datos (en todo-backend/)
+	Como se activo la autenticación en Mongo con user root/example (del archivo yml)
+	La URL debe incluir usuario/clave y authSource=admin (porque el usuario root vive en admin).
 		MONGO_URL="mongodb://root:example@localhost:3456/the_database?authSource=admin" npm run dev
+	
 	Si se desea crear un usuario de aplicación en lugar de usar root (del archivo mongo-init.js)
-		MONGO_URL="mongodb://username:password@localhost:3456/the_database" npm run dev
+		MONGO_URL="mongodb://the_username:the_password@localhost:3456/the_database" npm run dev
+
+	Redis
+		REDIS_URL="redis://localhost:6379" \
+		(si el backend corre dentro de Docker, deberías usar redis://redis:6379)

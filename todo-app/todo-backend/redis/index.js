@@ -17,9 +17,9 @@ if (!REDIS_URL) {
     url: REDIS_URL
   })
     
-  getAsync = promisify(client.get).bind(client)
-  setAsync = promisify(client.set).bind(client)    
-}
+  getAsync = promisify(client.get).bind(client)   //La función getAsync toma la clave y devuelve el valor en una promesa.
+  setAsync = promisify(client.set).bind(client)   //La función setAsync toma la clave y el valor, usando la clave para almacenar el valor.
+} 
 
 module.exports = {
   getAsync,

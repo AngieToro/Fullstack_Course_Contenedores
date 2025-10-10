@@ -1,4 +1,5 @@
 const express = require('express');
+const redis = require('../redis')
 const { Todo } = require('../mongo')
 const router = express.Router();
 
@@ -14,6 +15,11 @@ router.post('/', async (req, res) => {
     text: req.body.text,
     done: false
   })
+
+  const addedTodos = await redis.getAsync('added_todos'); //'added_todos' es el key y con esto luego se toma el value y lee el valor actual
+  const newCount = Number(addedTodos || 0) + 1; //se incrementa el contador
+  await redis.setAsync('added_todos',newCount); //lo guarda de nuevo
+
   res.send(todo);
 });
 
