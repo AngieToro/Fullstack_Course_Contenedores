@@ -1,5 +1,5 @@
-# Fullstack_Course_ReactNative
-Curso de Contenedores de FullStack
+# Fullstack_Course_Contenedores
+Curso de Docker de FullStack
 
 Contenedores
 - Parte 12:
