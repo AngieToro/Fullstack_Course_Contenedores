@@ -70,8 +70,13 @@ Pasos creaciones usando Docker compose (plantillas)
 		MONGO_URL="mongodb://root:example@localhost:3456/the_database?authSource=admin" npm run dev
 	
 	Si se desea crear un usuario de aplicación en lugar de usar root (del archivo mongo-init.js)
-		MONGO_URL="mongodb://the_username:the_password@localhost:3456/the_database" npm run dev
+		MONGO_URL="mongodb://the_username:the_password@localhost:3456/the_database" npm run dev \
 
 	Redis
 		REDIS_URL="redis://localhost:6379" \
 		(si el backend corre dentro de Docker, deberías usar redis://redis:6379)
+
+	Resultado completo
+		REDIS_URL="redis://localhost:6379" \
+MONGO_URL="mongodb://the_username:the_password@localhost:3456/the_database" \
+npm run dev

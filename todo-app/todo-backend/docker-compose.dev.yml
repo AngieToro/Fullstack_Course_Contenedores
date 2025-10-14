@@ -3,7 +3,7 @@ services:
     image: mongo:7
     container_name: todo-dev-mongo
     ports:
-      - 3456:27017
+      - 3456:27017          # para conectarse desde host si se necesita
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
@@ -24,5 +24,27 @@ services:
     command: ['redis-server', '--appendonly', 'yes'] # Overwrite the CMD
     volumes: # Declare the volume
       - ./redis_data:/data
+  server:
+    build: 
+      context: .                
+      dockerfile: dev.Dockerfile # se usa el dev Dockerfile del backend
+    container_name: todo-backend-dev
+    ports:
+      - "3000:3000"         # expone el backend al host
+    volumes:
+      - .:/usr/src/app
+      # Evitar que el bind mount pise node_modules del contenedor
+      - /usr/src/app/node_modules
+    environment:
+      PORT: "3000"
+      # Usa los nombres de servicio de Compose dentro de la red interna
+      REDIS_URL: "redis://redis:6379"
+      MONGO_URL: "mongodb://the_username:the_password@mongo:27017/the_database"
+    depends_on:
+      - mongo
+      - redis
+    restart: unless-stopped
+    # Si se quiere forzar a usar el script dev del package.json:
+    command: sh -c "npm run dev"
 volumes:
   mongo_data:

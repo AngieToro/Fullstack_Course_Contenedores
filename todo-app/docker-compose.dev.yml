@@ -1,0 +1,70 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: todo-nginx-dev
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - todo-frontend
+      - todo-backend
+
+  todo-frontend:
+    build:
+      context: ./todo-frontend
+      dockerfile: dev.Dockerfile
+    container_name: todo-frontend-dev
+    working_dir: /usr/src/app
+    environment:
+      # El frontend llamará a /api (Nginx lo redirige al backend)
+      - VITE_BACKEND_URL=/api
+    #ports:
+     # - "5173:5173"            # opcional, útil para debug directo del Vite server
+    volumes:
+      - ./todo-frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    #command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+
+  todo-backend:
+    build:
+      context: ./todo-backend
+      dockerfile: dev.Dockerfile
+    container_name: todo-backend-dev
+    working_dir: /usr/src/app
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - MONGO_URL=mongodb://the_username:the_password@mongo:27017/the_database
+    #ports:
+     # - "3000:3000"
+    volumes:
+      - ./todo-backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:7
+    container_name: todo-dev-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: the_database
+    volumes:
+      - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongo_data:/data/db
+    #ports:
+     # - "3456:27017"
+
+  redis:
+    image: redis:7
+    container_name: todo-dev-redis
+    #ports:
+     # - "6379:6379"
+    volumes: # Declare the volume
+      - ./redis_data:/data
+  
+volumes:
+  mongo_data:
